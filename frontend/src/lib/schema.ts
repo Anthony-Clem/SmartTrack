@@ -1,0 +1,35 @@
+import { z } from "zod";
+
+export const registerSchema = z
+  .object({
+    name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export type RegisterSchema = z.infer<typeof registerSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password required" }),
+});
+
+export type LoginSchema = z.infer<typeof loginSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+});
+
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z.object({
+  password: z.string().min(1, { message: "Password required" }),
+  newPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
+});
+
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
